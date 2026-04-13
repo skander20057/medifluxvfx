@@ -31,19 +31,14 @@ export default function LoginPage() {
 
     // MASTER BYPASS: Skander / 3333
     if (identifier.toLowerCase() === "skander" && password === "3333") {
-      // Simulate login for Skander
-      const { data: { session } } = await supabase.auth.getSession();
-      
-      // If no session, we use the specific admin email
       let email = "skander@mediflux.com";
-      
       const { data, error: authError } = await supabase.auth.signInWithPassword({
         email: email,
         password: "3333", 
       });
 
       if (!authError && data.user) {
-         router.push("/admin");
+         router.push("/dashboard/admin");
          return;
       }
     }
@@ -59,7 +54,7 @@ export default function LoginPage() {
       
       if (data.user) {
         const profile = await profileService.getProfile(data.user.id);
-        router.push(`/${profile?.role || 'patient'}`);
+        router.push(`/dashboard/${profile?.role || 'patient'}`);
       }
     } catch (err: any) {
       setError("ACCÈS REFUSÉ. VÉRIFIEZ VOS PARAMÈTRES.");

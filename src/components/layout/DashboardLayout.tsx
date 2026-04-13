@@ -29,11 +29,11 @@ interface SidebarItem {
 }
 
 const sidebarItems: SidebarItem[] = [
-  { title: "Dashboard", icon: LayoutDashboard, href: "/admin", role: ["admin"] },
-  { title: "Accès Pro", icon: Users, href: "/admin/access-management", role: ["admin"] },
-  { title: "Consultations", icon: Stethoscope, href: "/doctor", role: ["doctor"] },
-  { title: "Flux Pharma", icon: Pill, href: "/pharmacy", role: ["pharmacy"] },
-  { title: "Profil", icon: User, href: "/profile", role: ["doctor", "pharmacy", "clinic", "patient"] },
+  { title: "Dashboard", icon: LayoutDashboard, href: "/dashboard/admin", role: ["admin"] },
+  { title: "Accès Pro", icon: Users, href: "/dashboard/admin/access-management", role: ["admin"] },
+  { title: "Consultations", icon: Stethoscope, href: "/dashboard/doctor", role: ["doctor"] },
+  { title: "Flux Pharma", icon: Pill, href: "/dashboard/pharmacy", role: ["pharmacy"] },
+  { title: "Profil", icon: User, href: "/dashboard/profile", role: ["doctor", "pharmacy", "clinic", "patient"] },
 ];
 
 export const DashboardLayout = ({ 
