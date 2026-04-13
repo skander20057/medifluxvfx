@@ -1,5 +1,6 @@
 @import "tailwindcss";
 
+/* Configuration des variables pour Tailwind v4 & Compatibilité IDE */
 @theme {
   --font-inter: "Inter", "Outfit", sans-serif;
   --color-accent-green: #00FF88;
@@ -7,32 +8,66 @@
   --color-card-bg: #0A0A0B;
 }
 
+/* Base Styles */
 @layer base {
   body {
-    @apply bg-black text-white antialiased selection:bg-accent-green/30;
+    background-color: #000000;
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 }
 
+/* Luxury Master Components */
 @layer components {
   .glass-card {
-    @apply bg-[#0A0A0B]/60 backdrop-blur-2xl border border-white/[0.05] rounded-[2.5rem];
+    background-color: rgba(10, 10, 11, 0.6);
+    backdrop-filter: blur(40px);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 2.5rem;
     box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 1);
   }
 
   .neon-input {
-    @apply w-full bg-white/[0.02] border border-white/[0.08] rounded-2xl py-5 px-6 text-white outline-none
-           transition-all duration-500 focus:border-accent-green/40 focus:bg-white/[0.04]
-           focus:shadow-[0_0_30px_rgba(0,255,136,0.1)];
+    width: 100%;
+    background-color: rgba(255, 255, 255, 0.02);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 1rem;
+    padding: 1.25rem 1.5rem;
+    color: #ffffff;
+    outline: none;
+    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .neon-input:focus {
+    border-color: rgba(0, 255, 136, 0.4);
+    background-color: rgba(255, 255, 255, 0.04);
+    box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
   }
 
   .btn-master {
-    @apply w-full py-5 bg-accent-green text-black font-black uppercase tracking-widest rounded-2xl
-           transition-all duration-500 hover:shadow-[0_0_50px_rgba(0,255,136,0.4)]
-           hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3;
+    width: 100%;
+    padding: 1.25rem;
+    background-color: #00FF88;
+    color: #000000;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 1rem;
+    transition: all 0.5s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+  }
+
+  .btn-master:hover {
+    box-shadow: 0 0 50px rgba(0, 255, 136, 0.4);
+    transform: translateY(-2px);
   }
 }
 
-/* Texture de fond Luxe */
+/* Background Atmosphere */
 .atmosphere-mesh {
   background: 
     radial-gradient(circle at 50% -20%, rgba(0, 255, 136, 0.08) 0%, transparent 50%),
@@ -42,13 +77,6 @@
   z-index: -1;
 }
 
-/* Animation de Pulsation pour le Logo */
-@keyframes logo-pulse {
-  0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(0,255,136,0.2)); }
-  50% { transform: scale(1.05); filter: drop-shadow(0 0 30px rgba(0,255,136,0.5)); }
-  100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(0,255,136,0.2)); }
-}
-
-.animate-logo-pulse {
-  animation: logo-pulse 3s infinite ease-in-out;
-}
+/* Global Utilities */
+.shadow-glow { box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
+.label-caps { font-size: 10px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.2em; color: #4b5563; }
