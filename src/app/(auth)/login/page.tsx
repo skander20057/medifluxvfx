@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabaseClient";
+import { profileService, Profile } from "@/services/profile.service";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
 import { LogIn, Mail, Lock, AlertCircle } from "lucide-react";
@@ -32,16 +33,11 @@ export default function LoginPage() {
 
   const handleRedirection = async (userId: string) => {
     try {
-      const { data: profile } = await supabase
-        .from("profiles")
-        .select("role")
-        .eq("id", userId)
-        .single();
+      const profile = await profileService.getProfile(userId);
 
-      if (profile) {
+      if (profile && profile.role) {
         router.push(`/${profile.role}`);
       } else {
-        // Fallback or create profile if missing? For now, go to patient
         router.push("/patient");
       }
     } catch (err) {
