@@ -43,16 +43,16 @@ export type Database = {
       }
     }
     Views: {
-      [_ in vegetable]: never
+      [_ in string]: never
     }
     Functions: {
-      [_ in vegetable]: never
+      [_ in string]: never
     }
     Enums: {
       user_role: 'admin' | 'doctor' | 'patient' | 'pharmacy' | 'clinic'
     }
     CompositeTypes: {
-      [_ in vegetable]: never
+      [_ in string]: never
     }
   }
 }
