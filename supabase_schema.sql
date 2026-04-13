@@ -56,3 +56,48 @@ $$ LANGUAGE plpgsql SECURITY DEFINER;
 CREATE TRIGGER on_auth_user_created
     AFTER INSERT ON auth.users
     FOR EACH ROW EXECUTE FUNCTION public.handle_new_user();
+
+-- 7. Create Prescriptions Table
+CREATE TABLE public.prescriptions (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    doctor_id UUID REFERENCES public.profiles(id) NOT NULL,
+    patient_name TEXT NOT NULL,
+    patient_email TEXT,
+    medications JSONB NOT NULL, -- Format: [{name: "Doliprane", dose: "1000mg", timing: "3x/day"}]
+    notes TEXT,
+    status TEXT DEFAULT 'pending' NOT NULL, -- pending, ready, picked_up
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT timezone('utc'::text, now()) NOT NULL
+);
+
+-- 8. Enable RLS for Prescriptions
+ALTER TABLE public.prescriptions ENABLE ROW LEVEL SECURITY;
+
+-- 9. Prescriptions Policies
+-- Doctors can see and create their own prescriptions
+CREATE POLICY "Doctors manage own prescriptions" 
+ON public.prescriptions 
+FOR ALL 
+USING (auth.uid() = doctor_id);
+
+-- Pharmacies can see all 'pending' or 'ready' prescriptions to fulfill them
+CREATE POLICY "Pharmacies view all pending prescriptions" 
+ON public.prescriptions 
+FOR SELECT 
+USING (
+    EXISTS (
+        SELECT 1 FROM public.profiles 
+        WHERE id = auth.uid() AND role = 'pharmacy'
+    )
+);
+
+-- Patients can see prescriptions where their email matches (simple logic)
+CREATE POLICY "Patients view their own prescriptions" 
+ON public.prescriptions 
+FOR SELECT 
+USING (
+    patient_email = (SELECT email FROM auth.users WHERE id = auth.uid()) OR
+    EXISTS (
+        SELECT 1 FROM public.profiles 
+        WHERE id = auth.uid() AND role = 'admin'
+    )
+);

@@ -1,92 +1,134 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PremiumCard } from "@/components/ui/PremiumCard";
-import { Search, PlusCircle, Clock, FileText, User } from "lucide-react";
+import { prescriptionService, Prescription } from "@/services/prescription.service";
+import { createClient } from "@/lib/supabaseClient";
+import { 
+  Plus, 
+  FileText, 
+  Clock, 
+  CheckCircle2, 
+  ChevronRight, 
+  User, 
+  Stethoscope,
+  Activity
+} from "lucide-react";
+import Link from "next/link";
 
 export default function DoctorDashboard() {
+  const [prescriptions, setPrescriptions] = useState<Prescription[]>([]);
+  const [loading, setLoading] = useState(true);
+  const supabase = createClient();
+
+  useEffect(() => {
+    const fetchData = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        try {
+          const data = await prescriptionService.getDoctorPrescriptions(user.id);
+          setPrescriptions(data);
+        } catch (err) {
+          console.error("error fetching prescriptions:", err);
+        }
+      }
+      setLoading(false);
+    };
+
+    fetchData();
+
+    // Real-time subscription
+    const channel = prescriptionService.subscribeToPrescriptions(() => {
+        fetchData(); // Refresh on any change
+    });
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [supabase]);
+
+  const stats = [
+    { label: "CONSULTATIONS", value: "12", icon: <Stethoscope className="w-5 h-5" />, color: "text-blue-400" },
+    { label: "ORDONNANCES", value: prescriptions.length.toString(), icon: <FileText className="w-5 h-5" />, color: "text-accent-green" },
+    { label: "ALERTES", value: "2", icon: <Activity className="w-5 h-5" />, color: "text-red-400" },
+  ];
+
   return (
-    <DashboardLayout role="doctor" userName="Dr. Mansour">
-      <div className="space-y-8">
-        <div className="flex items-center justify-between">
-          <h2 className="text-3xl font-bold tracking-tighter uppercase italic">CONSULTATIONS EN COURS</h2>
-          <button className="bg-accent-green text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-glow transition-all">
-            <PlusCircle className="w-5 h-5" /> NOUVELLE CONSULTATION
-          </button>
+    <DashboardLayout role="doctor" userName="Dr. Skander">
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        {/* Header with quick action */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+          <div>
+            <h2 className="text-4xl font-bold tracking-tighter uppercase italic text-white">CENTRE DE COMMANDE</h2>
+            <p className="text-gray-500 font-mono text-xs mt-1">SÉANCE ACTIVE : CLINIQUE ENNASR</p>
+          </div>
+          <Link href="/doctor/prescriptions/new">
+            <button className="bg-accent-green text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-glow-strong hover:-translate-y-1 transition-all">
+              <Plus className="w-5 h-5" /> NOUVELLE ORDONNANCE
+            </button>
+          </Link>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
-          {/* Main Queue */}
-          <div className="lg:col-span-3 space-y-6">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500 w-5 h-5" />
-              <input className="w-full bg-white/5 border border-white/10 rounded-2xl py-5 pl-12 pr-4 text-white focus:border-accent-green/50 outline-none transition-all" placeholder="Rechercher un patient par nom ou CIN..." />
-            </div>
-
-            <div className="space-y-4">
-              {[
-                { name: "Sami Ben Rejeb", time: "09:30", status: "En attente", age: "42 ans" },
-                { name: "Ines Mahmoud", time: "10:00", status: "En examen", age: "28 ans" },
-                { name: "Fares Gharbi", time: "10:30", status: "Terminé", age: "55 ans" },
-              ].map((patient, i) => (
-                <PremiumCard key={i} className="flex items-center justify-between hover:border-accent-green/40 transition-all">
-                   <div className="flex items-center gap-6">
-                      <div className="w-12 h-12 bg-accent-green/10 rounded-full flex items-center justify-center border border-accent-green/30">
-                        <User className="text-accent-green w-6 h-6" />
-                      </div>
-                      <div>
-                        <p className="text-xl font-bold text-white tracking-tight">{patient.name}</p>
-                        <p className="text-sm text-gray-500">{patient.age} • RDV : {patient.time}</p>
-                      </div>
-                   </div>
-                   <div className="flex items-center gap-6">
-                      <span className={`px-3 py-1 rounded-full text-[10px] uppercase font-bold tracking-widest ${
-                        patient.status === 'En examen' ? 'bg-accent-green text-black' : 'bg-white/10 text-gray-400'
-                      }`}>
-                        {patient.status}
-                      </span>
-                      <div className="flex gap-2">
-                        <button className="p-2 hover:bg-white/10 rounded-lg text-gray-400"><FileText className="w-5 h-5" /></button>
-                        <button className="p-2 hover:bg-accent-green/10 rounded-lg text-accent-green"><PlusCircle className="w-5 h-5" /></button>
-                      </div>
-                   </div>
-                </PremiumCard>
-              ))}
-            </div>
-          </div>
-
-          {/* Stats & Schedule */}
-          <div className="space-y-6">
-            <h3 className="text-xs text-gray-500 uppercase tracking-widest font-mono">STATISTIQUES JOURNÉE</h3>
-            <PremiumCard className="p-6 space-y-4 bg-accent-green/[0.02]">
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">Total Patients</span>
-                <span className="font-bold">12</span>
-              </div>
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">Terminés</span>
-                <span className="font-bold text-accent-green text-lg">8</span>
-              </div>
-              <div className="h-px bg-white/5" />
-              <div className="flex justify-between items-center text-sm">
-                <span className="text-gray-400">Temps Moyen</span>
-                <span className="font-bold">15 min</span>
-              </div>
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {stats.map((stat, i) => (
+            <PremiumCard key={i} className="p-6">
+               <div className="flex items-center gap-4">
+                  <div className={`p-3 bg-white/5 rounded-xl ${stat.color}`}>
+                    {stat.icon}
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{stat.label}</p>
+                    <p className="text-2xl font-bold text-white">{stat.value}</p>
+                  </div>
+               </div>
             </PremiumCard>
+          ))}
+        </div>
 
-            <h3 className="text-xs text-gray-500 uppercase tracking-widest font-mono">AGENDA</h3>
-            <div className="space-y-3">
-               {[1, 2, 3].map(i => (
-                 <div key={i} className="flex gap-4 items-center p-3 bg-white/5 border border-white/5 rounded-xl">
-                   <Clock className="w-4 h-4 text-accent-green" />
-                   <div className="text-xs">
-                     <p className="font-bold">Staff Meeting</p>
-                     <p className="text-gray-500">14:00 - 15:00</p>
-                   </div>
-                 </div>
-               ))}
-            </div>
+        {/* Recent Prescriptions */}
+        <div className="space-y-4">
+          <h3 className="text-xl font-bold text-white flex items-center gap-2">
+            <Clock className="w-5 h-5 text-gray-500" /> FLUX RÉCENT
+          </h3>
+          
+          <div className="grid grid-cols-1 gap-4">
+            {loading ? (
+              [1, 2, 3].map(i => (
+                <div key={i} className="h-24 bg-white/5 animate-pulse rounded-2xl border border-white/5" />
+              ))
+            ) : prescriptions.length > 0 ? (
+              prescriptions.map((presc) => (
+                <PremiumCard key={presc.id} className="p-6 flex items-center justify-between group cursor-pointer hover:border-accent-green/30">
+                  <div className="flex items-center gap-6">
+                    <div className="w-12 h-12 rounded-full bg-accent-green/10 flex items-center justify-center text-accent-green">
+                      <User className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <h4 className="font-bold text-lg text-white">{presc.patient_name}</h4>
+                      <p className="text-xs text-gray-500">{new Date(presc.created_at!).toLocaleDateString()}</p>
+                    </div>
+                  </div>
+                  
+                  <div className="flex items-center gap-6">
+                    <div className="hidden md:block text-right">
+                       <p className="text-[10px] font-mono text-gray-500 uppercase">Status</p>
+                       <span className={`text-[10px] font-bold uppercase ${presc.status === 'picked_up' ? 'text-accent-green' : 'text-orange-400'}`}>
+                         {presc.status === 'pending' ? 'EN ATTENTE' : 'PRÊT'}
+                       </span>
+                    </div>
+                    <div className="p-2 bg-white/5 rounded-lg group-hover:bg-accent-green/10 group-hover:text-accent-green transition-all">
+                      <ChevronRight className="w-5 h-5" />
+                    </div>
+                  </div>
+                </PremiumCard>
+              ))
+            ) : (
+              <div className="p-12 text-center text-gray-600 border-2 border-dashed border-white/5 rounded-3xl">
+                AUCUNE ORDONNANCE POUR LE MOMENT
+              </div>
+            )}
           </div>
         </div>
       </div>
