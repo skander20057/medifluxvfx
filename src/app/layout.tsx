@@ -5,12 +5,14 @@ import "../styles/globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "MediFlux | Portail Médical Premium",
-  description: "Système de gestion médicale intelligente de haute performance.",
+  title: "MediFlux - OS Médical Premium",
+  description: "Plateforme de gestion médicale nouvelle génération",
   icons: {
     icon: "/icon.png",
+    shortcut: "/icon.png",
     apple: "/icon.png",
   },
+  themeColor: "#000000",
 };
 
 export default function RootLayout({

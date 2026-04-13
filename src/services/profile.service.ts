@@ -32,8 +32,7 @@ export const profileService = {
    * Update a user profile
    */
   updateProfile: async (userId: string, updates: any) => {
-    const { data, error } = await supabase
-      .from("profiles")
+    const { data, error } = await (supabase.from("profiles") as any)
       .update(updates)
       .eq("id", userId);
 
