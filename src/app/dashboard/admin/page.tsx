@@ -110,7 +110,7 @@ export default function AdminDashboard() {
 
         {/* Action Center */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
-           <Link href="/admin/access-management">
+           <Link href="/dashboard/admin/access-management">
               <PremiumCard className="p-10 group cursor-pointer hover:border-accent-green/40">
                  <div className="flex items-center justify-between">
                     <div className="space-y-4">

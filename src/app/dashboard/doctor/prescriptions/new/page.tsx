@@ -69,7 +69,7 @@ export default function NewPrescriptionPage() {
       });
 
       setSuccess(true);
-      setTimeout(() => router.push("/doctor"), 2000);
+      setTimeout(() => router.push("/dashboard/doctor"), 2000);
     } catch (err: any) {
       setError(err.message || "Erreur lors de l'envoi");
       setLoading(false);
@@ -98,7 +98,7 @@ export default function NewPrescriptionPage() {
     <DashboardLayout role="doctor" userName="Dr. Skander">
       <div className="max-w-4xl mx-auto space-y-12 pb-20">
         <div className="flex items-center gap-6">
-          <Link href="/doctor" className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all">
+          <Link href="/dashboard/doctor" className="p-4 bg-white/5 border border-white/5 rounded-2xl hover:bg-white/10 transition-all">
             <ArrowLeft className="w-6 h-6 text-white" />
           </Link>
           <div>

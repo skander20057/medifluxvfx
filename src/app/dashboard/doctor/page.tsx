@@ -63,7 +63,7 @@ export default function DoctorDashboard() {
             <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic text-white leading-none">Command Center</h2>
             <p className="text-gray-500 font-mono text-[10px] tracking-[0.3em] mt-2 uppercase">Session: Clinique Ennasr • Active</p>
           </div>
-          <Link href="/doctor/prescriptions/new" className="w-full lg:w-auto">
+          <Link href="/dashboard/doctor/prescriptions/new" className="w-full lg:w-auto">
             <button className="btn-3d-neon w-full flex items-center justify-center gap-3">
               <Plus className="w-6 h-6" strokeWidth={3} /> NOUVELLE ORDONNANCE
             </button>
