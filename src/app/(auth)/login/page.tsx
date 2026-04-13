@@ -174,7 +174,7 @@ export default function LoginPage() {
             <p className="text-gray-700 text-[9px] font-mono uppercase tracking-[0.5em] text-center">
               Restricted Area • Encryption AES-256 Active
             </p>
-          </motion.div>
+          </footer>
         </PremiumCard>
       </motion.div>
       
