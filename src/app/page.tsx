@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { motion } from "framer-motion";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { ShieldAlert, Stethoscope, Pill, User, ArrowRight } from "lucide-react";
 
@@ -47,31 +48,43 @@ export default function AccessPortal() {
         </div>
 
         {/* Grid Section */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {portals.map((portal) => (
-            <Link key={portal.title} href="/login">
-              <PremiumCard className="h-64 flex flex-col justify-between">
-                <div className="space-y-4">
-                  <div className="p-3 bg-accent-green/10 rounded-xl w-fit">
-                    {portal.icon}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8, ease: "easeOut" }}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+        >
+          {portals.map((portal, index) => (
+            <motion.div
+              key={portal.title}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.1 + 0.5 }}
+            >
+              <Link href="/login">
+                <PremiumCard className="h-64 flex flex-col justify-between group">
+                  <div className="space-y-4">
+                    <div className="p-3 bg-accent-green/10 rounded-xl w-fit group-hover:bg-accent-green/20 transition-colors">
+                      {portal.icon}
+                    </div>
+                    <div>
+                      <h3 className="text-xl font-bold text-white tracking-tight">
+                        {portal.title}
+                      </h3>
+                      <p className="text-gray-400 text-sm mt-1">
+                        {portal.description}
+                      </p>
+                    </div>
                   </div>
-                  <div>
-                    <h3 className="text-xl font-bold text-white tracking-tight">
-                      {portal.title}
-                    </h3>
-                    <p className="text-gray-400 text-sm mt-1">
-                      {portal.description}
-                    </p>
+                  
+                  <div className="flex items-center text-accent-green text-sm font-semibold group-hover:translate-x-2 transition-transform">
+                    ACCÉDER <ArrowRight className="ml-2 w-4 h-4" />
                   </div>
-                </div>
-                
-                <div className="flex items-center text-accent-green text-sm font-semibold group-hover:translate-x-2 transition-transform">
-                  ACCÉDER <ArrowRight className="ml-2 w-4 h-4" />
-                </div>
-              </PremiumCard>
-            </Link>
+                </PremiumCard>
+              </Link>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
 
         {/* Footer */}
         <div className="pt-12 border-t border-white/5 flex flex-col items-center space-y-4">

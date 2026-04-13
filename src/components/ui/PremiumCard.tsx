@@ -36,8 +36,8 @@ export const PremiumCard = ({ children, className = "", onClick }: PremiumCardPr
       onMouseLeave={() => setIsHovered(false)}
       className={`
         relative overflow-hidden
-        bg-[#0A0A0B]/80 backdrop-blur-[12px]
-        border-[0.5px] border-[#1F1F22] rounded-2xl
+        bg-[#0A0A0B]/60 backdrop-blur-[20px]
+        border-[1px] border-white/[0.03] rounded-2xl
         transition-all duration-500
         hover:border-accent-green/20
         ${className}

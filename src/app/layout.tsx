@@ -20,16 +20,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="fr" className="dark">
-      <body className={`${inter.className} bg-bg-main text-white antialiased`}>
-        <div className="relative min-height-screen overflow-hidden">
-          {/* Background Glow Overlay */}
-          <div className="pointer-events-none absolute -top-1/2 -left-1/2 w-full h-full bg-accent-green/5 blur-[120px] rounded-full" />
-          <div className="pointer-events-none absolute -bottom-1/2 -right-1/2 w-full h-full bg-accent-green/5 blur-[120px] rounded-full" />
-          
-          <main className="relative z-10">
-            {children}
-          </main>
+      <body className={`${inter.className} bg-black antialiased overflow-x-hidden`}>
+        {/* Atmosphere Layer */}
+        <div className="fixed inset-0 z-[-1] bg-mesh pointer-events-none">
+          <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-accent-green/5 blur-[120px] rounded-full animate-glow-slow" />
+          <div className="absolute bottom-[-10%] right-[-10%] w-[30%] h-[30%] bg-accent-green/3 blur-[100px] rounded-full animate-glow-slow [animation-delay:4s]" />
         </div>
+        
+        <main className="relative z-10">
+          {children}
+        </main>
       </body>
     </html>
   );
