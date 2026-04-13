@@ -4,10 +4,10 @@ import { Database } from '@/types/database.types'
 
 /**
  * Client pour les Server Components, Route Handlers et Server Actions.
- * Ce fichier utilise next/headers et doit être importé uniquement dans du code serveur.
+ * Compatible avec Next.js 15/16 ( cookies() est asynchrone ).
  */
-export const createClient = () => {
-  const cookieStore = cookies()
+export const createClient = async () => {
+  const cookieStore = await cookies()
 
   return createServerClient<Database>(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
