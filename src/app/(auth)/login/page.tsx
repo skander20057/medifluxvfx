@@ -6,14 +6,14 @@ import { createClient } from "@/lib/supabaseClient";
 import { profileService } from "@/services/profile.service";
 import { PremiumCard } from "@/components/ui/PremiumCard";
 import { LoadingScreen } from "@/components/ui/LoadingScreen";
-import { LogIn, Mail, Lock, AlertCircle, Shield } from "lucide-react";
+import { LogIn, Shield, Lock, Fingerprint, Activity } from "lucide-react";
 import { motion } from "framer-motion";
 
 export default function LoginPage() {
   const router = useRouter();
   const supabase = createClient();
   
-  const [email, setEmail] = useState("");
+  const [identifier, setIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -50,16 +50,22 @@ export default function LoginPage() {
     setLoading(true);
     setError(null);
 
+    // Dynamic mapping: If user types "skander", we map to his medical email
+    let finalEmail = identifier;
+    if (identifier.toLowerCase() === "skander") {
+      finalEmail = "skander@mediflux.com"; // Default internal admin email
+    }
+
     try {
       const { data, error: authError } = await supabase.auth.signInWithPassword({
-        email,
+        email: finalEmail.includes("@") ? finalEmail : `${finalEmail}@mediflux.pro`,
         password,
       });
 
       if (authError) throw authError;
       if (data.user) await handleRedirection(data.user.id);
     } catch (err: any) {
-      setError(err.message || "Erreur lors de la connexion");
+      setError("DÉTAILS D'ACCÈS INVALIDE");
       setLoading(false);
     }
   };
@@ -67,72 +73,85 @@ export default function LoginPage() {
   if (initialLoading) return <LoadingScreen />;
 
   return (
-    <div className="relative min-h-screen bg-[#000000] flex items-center justify-center p-6 overflow-hidden selection:bg-accent-green/30">
-      {/* Dynamic Digital Atmosphere */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-[-20%] left-[-10%] w-[60%] h-[60%] bg-accent-green/[0.03] blur-[150px] rounded-full animate-glow" />
-        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-accent-green/[0.02] blur-[120px] rounded-full animate-glow [animation-delay:2s]" />
+    <div className="relative min-h-screen bg-black flex items-center justify-center p-6 overflow-hidden selection:bg-accent-green/30">
+      <div className="atmosphere-mesh" />
+
+      {/* Cyber Background Details */}
+      <div className="absolute inset-0 pointer-events-none opacity-20">
+         <div className="absolute top-1/2 left-0 w-full h-px bg-gradient-to-r from-transparent via-accent-green/20 to-transparent" />
+         <div className="absolute left-1/2 top-0 w-px h-full bg-gradient-to-b from-transparent via-accent-green/20 to-transparent" />
       </div>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
+        initial={{ opacity: 0, y: 40 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8, ease: [0.4, 0, 0.2, 1] }}
-        className="w-full max-w-lg z-10"
+        transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+        className="w-full max-w-xl z-20"
       >
-        <PremiumCard className="p-10 md:p-14 border-white/[0.05] shadow-[0_40px_100px_rgba(0,0,0,0.8)]">
-          <div className="flex flex-col items-center mb-12">
+        <PremiumCard className="p-12 md:p-16 border-white/[0.05] shadow-[0_100px_200px_rgba(0,0,0,0.9)]">
+          {/* Pulsation Icon Header */}
+          <div className="flex flex-col items-center mb-16">
             <motion.div 
-              whileHover={{ rotate: 360, scale: 1.1 }}
-              transition={{ duration: 1 }}
-              className="w-20 h-20 bg-accent-green/[0.08] border border-accent-green/20 rounded-[2rem] flex items-center justify-center mb-6 shadow-[0_0_30px_rgba(0,255,136,0.1)]"
+              animate={{
+                scale: [1, 1.05, 1],
+                filter: ["drop-shadow(0 0 10px rgba(0,255,136,0.3))", "drop-shadow(0 0 25px rgba(0,255,136,0.5))", "drop-shadow(0 0 10px rgba(0,255,136,0.3))"]
+              }}
+              transition={{ duration: 3, repeat: Infinity }}
+              className="w-24 h-24 bg-[#0A0A0B] border border-accent-green/20 rounded-[2.5rem] flex items-center justify-center mb-10 shadow-glow relative group"
             >
-              <Shield className="w-10 h-10 text-accent-green drop-shadow-[0_0_10px_rgba(0,255,136,0.5)]" strokeWidth={1.5} />
+              <Shield className="w-12 h-12 text-accent-green group-hover:scale-110 transition-transform" strokeWidth={1} />
+              <div className="absolute inset-[-10px] bg-accent-green/5 blur-2xl rounded-full opacity-50" />
             </motion.div>
-            <h1 className="text-4xl font-black tracking-tighter text-white">ACCESS PORTAL</h1>
-            <p className="text-gray-500 font-mono text-[10px] mt-2 uppercase tracking-[0.4em]">MediFlux Secure OS v4.0</p>
+            
+            <h1 className="text-5xl font-black tracking-tighter text-white text-center leading-none">
+              KERNEL<br/><span className="text-accent-green">ACCESS</span>
+            </h1>
+            <div className="flex items-center gap-3 mt-6">
+              <Activity className="w-3 h-3 text-accent-green animate-pulse" />
+              <p className="text-gray-500 font-mono text-[9px] uppercase tracking-[0.6em]">System Authentication v5.0</p>
+            </div>
           </div>
 
-          <form onSubmit={handleLogin} className="space-y-8">
+          <form onSubmit={handleLogin} className="space-y-10">
             {error && (
               <motion.div 
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                className="flex items-center gap-3 p-4 rounded-2xl bg-red-500/[0.08] border border-red-500/20 text-red-500 text-sm font-bold"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="flex items-center justify-center gap-3 p-4 rounded-2xl bg-red-500/[0.05] border border-red-500/20 text-red-500 text-[10px] font-black uppercase tracking-widest"
               >
-                <AlertCircle className="w-5 h-5" />
                 {error}
               </motion.div>
             )}
 
-            <div className="space-y-6">
+            <div className="space-y-8">
               <div className="space-y-2">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 ml-1">Digital Identifier</label>
+                <label className="label-caps italic ml-1 opacity-70">Identifiant Digital / Login</label>
                 <div className="relative group">
-                  <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 transition-colors group-focus-within:text-accent-green" strokeWidth={1.5} />
+                  <Fingerprint className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 group-focus-within:text-accent-green transition-all" strokeWidth={1.5} />
                   <input
-                    type="email"
                     required
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-white placeholder:text-gray-700 outline-none focus:border-accent-green/30 transition-all duration-300"
-                    placeholder="name@mediflux.com"
+                    value={identifier}
+                    onChange={(e) => setIdentifier(e.target.value)}
+                    className="w-full bg-white/[0.02] border border-white/5 rounded-[1.5rem] py-6 pl-16 pr-8 text-white placeholder:text-gray-800 outline-none focus:border-accent-green/30 focus:bg-white/[0.04] transition-all duration-500 text-lg font-bold"
+                    placeholder="ex: skander"
                   />
+                  <div className="absolute inset-0 rounded-[1.5rem] border border-accent-green/10 opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
                 </div>
               </div>
 
               <div className="space-y-2">
-                <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 ml-1">Cryptographic Key</label>
+                <label className="label-caps italic ml-1 opacity-70">Clé de Déchiffrement</label>
                 <div className="relative group">
-                  <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-600 transition-colors group-focus-within:text-accent-green" strokeWidth={1.5} />
+                  <Lock className="absolute left-6 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-700 group-focus-within:text-accent-green transition-all" strokeWidth={1.5} />
                   <input
                     type="password"
                     required
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="w-full bg-white/[0.03] border border-white/5 rounded-2xl py-5 pl-14 pr-6 text-white placeholder:text-gray-700 outline-none focus:border-accent-green/30 transition-all duration-300"
+                    className="w-full bg-white/[0.02] border border-white/5 rounded-[1.5rem] py-6 pl-16 pr-8 text-white placeholder:text-gray-800 outline-none focus:border-accent-green/30 focus:bg-white/[0.04] transition-all duration-500 text-lg font-bold"
                     placeholder="••••••••"
                   />
+                  <div className="absolute inset-0 rounded-[1.5rem] border border-accent-green/10 opacity-0 group-focus-within:opacity-100 transition-opacity pointer-events-none" />
                 </div>
               </div>
             </div>
@@ -140,23 +159,27 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="neon-glow-btn w-full flex items-center justify-center gap-3 active:scale-95 disabled:opacity-50"
+              className="relative w-full py-6 bg-accent-green text-black font-black uppercase tracking-tighter rounded-[1.5rem] shadow-[0_0_40px_rgba(0,255,136,0.3)] hover:shadow-[0_0_60px_rgba(0,255,136,0.5)] hover:-translate-y-1 transition-all duration-500 flex items-center justify-center gap-4 group disabled:opacity-50"
             >
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity rounded-[1.5rem]" />
               {loading ? (
-                <div className="w-5 h-5 border-2 border-black/30 border-t-black rounded-full animate-spin" />
+                <div className="w-6 h-6 border-4 border-black/30 border-t-black rounded-full animate-spin" />
               ) : (
-                <>AUTHENTIFICATION <LogIn className="w-5 h-5" strokeWidth={2.5} /></>
+                <>DÉVERROUILLER L&apos;ACCÈS <LogIn className="w-6 h-6" strokeWidth={2.5} /></>
               )}
             </button>
           </form>
 
-          <div className="mt-12 pt-8 border-t border-white/[0.05] text-center">
-            <p className="text-gray-600 text-[10px] font-mono uppercase tracking-widest">
-              Restricted Area • Unified Medical Network Tunisia
+          <footer className="mt-16 pt-10 border-t border-white/[0.05] flex flex-col items-center gap-4">
+            <p className="text-gray-700 text-[9px] font-mono uppercase tracking-[0.5em] text-center">
+              Restricted Area • Encryption AES-256 Active
             </p>
-          </div>
+          </motion.div>
         </PremiumCard>
       </motion.div>
+      
+      {/* Scanline Effect overlay for that Pro look */}
+      <div className="fixed inset-0 pointer-events-none bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-10 mix-blend-overlay" />
     </div>
   );
 }
