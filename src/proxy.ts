@@ -1,7 +1,8 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
+// Important : La fonction doit s'appeler 'proxy' pour Next.js 16+
+export async function proxy(request: NextRequest) {
   let response = NextResponse.next({
     request: {
       headers: request.headers,
@@ -29,7 +30,7 @@ export async function middleware(request: NextRequest) {
   const { data: { user } } = await supabase.auth.getUser()
   const pathname = request.nextUrl.pathname
 
-  // Protect /dashboard
+  // Protection du Dashboard
   if (!user && pathname.startsWith('/dashboard')) {
       return NextResponse.redirect(new URL('/login', request.url))
   }
