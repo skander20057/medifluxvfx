@@ -31,7 +31,7 @@ export const profileService = {
   /**
    * Update a user profile
    */
-  updateProfile: async (userId: string, updates: Database['public']['Tables']['profiles']['Update']) => {
+  updateProfile: async (userId: string, updates: any) => {
     const { data, error } = await supabase
       .from("profiles")
       .update(updates)
