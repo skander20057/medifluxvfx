@@ -1,6 +1,5 @@
 @import "tailwindcss";
 
-/* Configuration des variables pour Tailwind v4 & Compatibilité IDE */
 @theme {
   --font-inter: "Inter", "Outfit", sans-serif;
   --color-accent-green: #00FF88;
@@ -8,75 +7,56 @@
   --color-card-bg: #0A0A0B;
 }
 
-/* Base Styles */
 @layer base {
   body {
-    background-color: #000000;
-    color: #ffffff;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
+    @apply bg-black text-white antialiased selection:bg-accent-green/30;
   }
 }
 
-/* Luxury Master Components */
 @layer components {
+  /* Restoring the Deep Luxury Glassmorphism 2.0 */
   .glass-card {
-    background-color: rgba(10, 10, 11, 0.6);
-    backdrop-filter: blur(40px);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 2.5rem;
-    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 1);
+    @apply bg-[#0A0A0B]/60 backdrop-blur-[50px] border border-white/[0.05] rounded-[2.5rem];
+    box-shadow: 0 50px 100px -20px rgba(0, 0, 0, 1), 0 0 50px rgba(0, 255, 136, 0.02);
   }
 
   .neon-input {
-    width: 100%;
-    background-color: rgba(255, 255, 255, 0.02);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 1rem;
-    padding: 1.25rem 1.5rem;
-    color: #ffffff;
-    outline: none;
-    transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  .neon-input:focus {
-    border-color: rgba(0, 255, 136, 0.4);
-    background-color: rgba(255, 255, 255, 0.04);
-    box-shadow: 0 0 30px rgba(0, 255, 136, 0.1);
+    @apply w-full bg-white/[0.02] border border-white/[0.08] rounded-2xl py-5 px-6 text-white outline-none
+           transition-all duration-500 focus:border-accent-green/40 focus:bg-white/[0.04]
+           focus:shadow-[0_0_40px_rgba(0,255,136,0.15),inset_0_0_15px_rgba(0,255,136,0.05)];
   }
 
   .btn-master {
-    width: 100%;
-    padding: 1.25rem;
-    background-color: #00FF88;
-    color: #000000;
-    font-weight: 900;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    border-radius: 1rem;
-    transition: all 0.5s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
+    @apply w-full py-5 bg-accent-green text-black font-black uppercase tracking-[0.2em] rounded-2xl
+           transition-all duration-500 hover:shadow-[0_0_60px_rgba(0,255,136,0.5)]
+           hover:-translate-y-1 active:scale-95 flex items-center justify-center gap-3;
   }
 
-  .btn-master:hover {
-    box-shadow: 0 0 50px rgba(0, 255, 136, 0.4);
-    transform: translateY(-2px);
+  .shadow-glow {
+    filter: drop-shadow(0 0 15px rgba(0, 255, 136, 0.3));
+  }
+
+  .label-caps {
+    @apply text-[10px] font-mono text-gray-600 uppercase tracking-[0.3em] italic;
   }
 }
 
-/* Background Atmosphere */
+/* Atmosphere Layer */
 .atmosphere-mesh {
   background: 
-    radial-gradient(circle at 50% -20%, rgba(0, 255, 136, 0.08) 0%, transparent 50%),
-    radial-gradient(circle at 0% 100%, rgba(0, 255, 136, 0.03) 0%, transparent 40%);
+    radial-gradient(circle at 50% -20%, rgba(0, 255, 136, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 10% 100%, rgba(0, 255, 136, 0.05) 0%, transparent 40%);
   position: fixed;
   inset: 0;
   z-index: -1;
 }
 
-/* Global Utilities */
-.shadow-glow { box-shadow: 0 0 20px rgba(0, 255, 136, 0.2); }
-.label-caps { font-size: 10px; font-family: monospace; text-transform: uppercase; letter-spacing: 0.2em; color: #4b5563; }
+@keyframes logo-pulse {
+  0% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(0,255,136,0.2)); }
+  50% { transform: scale(1.05); filter: drop-shadow(0 0 40px rgba(0,255,136,0.6)); }
+  100% { transform: scale(1); filter: drop-shadow(0 0 10px rgba(0,255,136,0.2)); }
+}
+
+.animate-logo-pulse {
+  animation: logo-pulse 4s infinite ease-in-out;
+}
