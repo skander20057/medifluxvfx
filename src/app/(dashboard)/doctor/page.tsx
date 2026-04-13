@@ -58,29 +58,29 @@ export default function DoctorDashboard() {
     <DashboardLayout role="doctor" userName="Dr. Skander">
       <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-1000">
         {/* Header with quick action */}
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
           <div>
-            <h2 className="text-4xl font-bold tracking-tighter uppercase italic text-white">CENTRE DE COMMANDE</h2>
-            <p className="text-gray-500 font-mono text-xs mt-1">SÉANCE ACTIVE : CLINIQUE ENNASR</p>
+            <h2 className="text-3xl md:text-5xl font-black tracking-tighter uppercase italic text-white leading-none">Command Center</h2>
+            <p className="text-gray-500 font-mono text-[10px] tracking-[0.3em] mt-2 uppercase">Session: Clinique Ennasr • Active</p>
           </div>
-          <Link href="/doctor/prescriptions/new">
-            <button className="bg-accent-green text-black px-6 py-3 rounded-xl font-bold flex items-center gap-2 hover:shadow-glow-strong hover:-translate-y-1 transition-all">
-              <Plus className="w-5 h-5" /> NOUVELLE ORDONNANCE
+          <Link href="/doctor/prescriptions/new" className="w-full lg:w-auto">
+            <button className="btn-3d-neon w-full flex items-center justify-center gap-3">
+              <Plus className="w-6 h-6" strokeWidth={3} /> NOUVELLE ORDONNANCE
             </button>
           </Link>
         </div>
 
-        {/* Stats Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {/* Stats Grid - Responsive Column Count */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((stat, i) => (
-            <PremiumCard key={i} className="p-6">
-               <div className="flex items-center gap-4">
-                  <div className={`p-3 bg-white/5 rounded-xl ${stat.color}`}>
+            <PremiumCard key={i} className="p-8">
+               <div className="flex items-center gap-6">
+                  <div className={`p-4 bg-white/[0.03] rounded-2xl ${stat.color} border border-white/5`}>
                     {stat.icon}
                   </div>
                   <div>
-                    <p className="text-[10px] font-mono text-gray-500 uppercase tracking-widest">{stat.label}</p>
-                    <p className="text-2xl font-bold text-white">{stat.value}</p>
+                    <p className="label-caps mb-1">{stat.label}</p>
+                    <p className="text-3xl font-black text-white">{stat.value}</p>
                   </div>
                </div>
             </PremiumCard>

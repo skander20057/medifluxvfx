@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { AlertCircle } from "lucide-react";
 
 interface PremiumInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label: string;
@@ -9,54 +10,65 @@ interface PremiumInputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   error?: string;
 }
 
-export const PremiumInput = ({ label, icon, error, className = "", ...props }: PremiumInputProps) => {
+export const PremiumInput = ({ label, icon, error, ...props }: PremiumInputProps) => {
+  const [isFocused, setIsFocused] = useState(false);
+
   return (
-    <div className="space-y-1.5 w-full">
-      <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 ml-1">
-        {label}
-      </label>
-      
-      <div className="relative group">
-        {/* Background Layer with internal glow on focus */}
-        <div className="absolute inset-0 rounded-xl bg-black transition-all group-focus-within:shadow-[inset_0_0_10px_rgba(0,255,136,0.05)]" />
-        
-        {/* Border Layer */}
-        <div className={`
-          relative flex items-center
-          border-[0.5px] rounded-xl overflow-hidden
-          transition-all duration-300
-          ${error ? 'border-red-500/50' : 'border-[#1F1F22] group-focus-within:border-accent-green'}
-        `}>
-          {icon && (
-            <div className="pl-4 text-gray-500 group-focus-within:text-accent-green transition-colors">
-              {icon}
-            </div>
-          )}
-          
-          <input
-            {...props}
-            className={`
-              w-full bg-transparent p-3.5 outline-none text-white text-sm
-              placeholder:text-gray-700
-              ${className}
-            `}
-          />
-        </div>
+    <div className="space-y-2 w-full group">
+      <div className="flex justify-between items-center ml-1">
+        <label className={`text-[10px] font-mono uppercase tracking-[0.2em] transition-colors duration-300 ${isFocused ? 'text-accent-green' : 'text-gray-500'}`}>
+          {label}
+        </label>
+        {error && (
+            <motion.span 
+              initial={{ opacity: 0, x: 5 }} 
+              animate={{ opacity: 1, x: 0 }}
+              className="text-[9px] font-bold text-red-500 uppercase tracking-widest flex items-center gap-1"
+            >
+               <AlertCircle className="w-3 h-3" /> {error}
+            </motion.span>
+        )}
       </div>
 
-      {/* Error Message with Micro-animation */}
-      <AnimatePresence>
-        {error && (
-          <motion.p
-            initial={{ opacity: 0, scale: 0.95, y: -5 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.95, y: -5 }}
-            className="text-[11px] text-red-500 mt-1 ml-1 font-medium"
-          >
-            {error}
-          </motion.p>
+      <div className="relative">
+        {icon && (
+          <div className={`absolute left-5 top-1/2 -translate-y-1/2 transition-colors duration-300 ${isFocused ? 'text-accent-green' : 'text-gray-600'}`}>
+             {icon}
+          </div>
         )}
-      </AnimatePresence>
+        
+        <input
+          {...props}
+          onFocus={(e) => {
+            setIsFocused(true);
+            props.onFocus?.(e);
+          }}
+          onBlur={(e) => {
+            setIsFocused(false);
+            props.onBlur?.(e);
+          }}
+          className={`
+            w-full bg-[#0A0A0B]/40 border border-white/5 rounded-2xl py-5 pr-6 transition-all duration-500
+            ${icon ? 'pl-14' : 'pl-6'}
+            ${isFocused ? 'border-accent-green/40 bg-white/[0.04] shadow-[0_0_25px_rgba(0,255,136,0.1)]' : 'hover:border-white/10'}
+            ${error ? 'border-red-500/30 bg-red-500/[0.02]' : ''}
+            text-white placeholder:text-gray-800 outline-none font-medium
+          `}
+        />
+
+        {/* Dynamic Bottom Line Glow */}
+        <AnimatePresence>
+          {isFocused && (
+            <motion.div 
+              layoutId="input-line"
+              initial={{ scaleX: 0 }}
+              animate={{ scaleX: 1 }}
+              exit={{ scaleX: 0 }}
+              className="absolute bottom-0 left-6 right-6 h-[1px] bg-gradient-to-r from-transparent via-accent-green/50 to-transparent"
+            />
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   );
 };
