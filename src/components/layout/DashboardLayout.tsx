@@ -17,6 +17,7 @@ import {
   Search
 } from "lucide-react";
 import { createClient } from "@/lib/supabaseClient";
+import { useView } from "@/context/ViewContext";
 import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarItem {
@@ -36,13 +37,16 @@ const sidebarItems: SidebarItem[] = [
 
 export const DashboardLayout = ({ 
   children, 
-  role, 
+  role: originalRole, 
   userName 
 }: { 
   children: React.ReactNode; 
   role: string;
   userName?: string;
 }) => {
+  const { simulatedRole } = useView();
+  const role = simulatedRole || originalRole;
+  
   const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
   const supabase = createClient();

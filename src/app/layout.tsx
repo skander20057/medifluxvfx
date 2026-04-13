@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "@/styles/globals.css";
+import { ViewProvider } from "@/context/ViewContext";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -28,12 +29,14 @@ export default function RootLayout({
   return (
     <html lang="fr" className="dark">
       <body className={`${inter.className} bg-black antialiased overflow-x-hidden`}>
-        {/* V5 Atmosphere Layer */}
-        <div className="atmosphere-mesh" />
-        
-        <main className="relative z-10 min-h-screen">
-          {children}
-        </main>
+        <ViewProvider>
+          {/* V5 Atmosphere Layer */}
+          <div className="atmosphere-mesh" />
+          
+          <main className="relative z-10 min-h-screen">
+            {children}
+          </main>
+        </ViewProvider>
       </body>
     </html>
   );

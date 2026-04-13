@@ -1,121 +1,151 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import { DashboardLayout } from "@/components/layout/DashboardLayout";
 import { PremiumCard } from "@/components/ui/PremiumCard";
-import { PremiumInput } from "@/components/ui/PremiumInput";
-import { UserPlus, Building, BarChart3, AlertTriangle, Users } from "lucide-react";
+import { useView } from "@/context/ViewContext";
+import { 
+  Users, 
+  Building, 
+  BarChart3, 
+  Activity, 
+  Eye, 
+  EyeOff, 
+  ArrowRight,
+  ShieldCheck,
+  Stethoscope,
+  Pill,
+  User
+} from "lucide-react";
+import Link from "next/link";
+import { motion } from "framer-motion";
 
 export default function AdminDashboard() {
-  const [activeTab, setActiveTab] = useState("overview");
+  const { simulatedRole, setSimulatedRole, isGhostMode } = useView();
+
+  const ghostRoles = [
+    { id: 'doctor', label: 'Scanner Vue Docteur', icon: <Stethoscope className="w-5 h-5"/>, color: 'text-blue-400' },
+    { id: 'pharmacy', label: 'Scanner Vue Pharmacie', icon: <Pill className="w-5 h-5"/>, color: 'text-purple-400' },
+    { id: 'patient', label: 'Scanner Vue Patient', icon: <User className="w-5 h-5"/>, color: 'text-orange-400' },
+  ];
 
   return (
     <DashboardLayout role="admin" userName="Skander (Master)">
-      <div className="space-y-8">
-        {/* Rapid Stats Header */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <PremiumCard className="p-4 border-l-4 border-accent-green">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-accent-green/10 rounded-lg text-accent-green">
-                <Users className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-gray-500 text-xs">Total Utilisateurs</p>
-                <p className="text-2xl font-bold">1,204</p>
-              </div>
+      <div className="space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+        
+        {/* Master Control Header */}
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8">
+          <div>
+            <h2 className="text-5xl font-black tracking-tighter uppercase italic">Master Control</h2>
+            <div className="flex items-center gap-3 mt-2 text-accent-green font-mono text-[10px] tracking-[0.3em]">
+               <ShieldCheck className="w-4 h-4 shadow-glow" /> PRIVILÈGES MAXIMUM : ACTIFS
             </div>
+          </div>
+
+          {/* Ghost Mode Switcher */}
+          <div className="flex flex-wrap gap-4">
+            {ghostRoles.map((role) => (
+              <button
+                key={role.id}
+                onClick={() => setSimulatedRole(simulatedRole === role.id ? null : role.id as any)}
+                className={`
+                  flex items-center gap-3 px-5 py-3 rounded-2xl border transition-all duration-500
+                  ${simulatedRole === role.id 
+                    ? 'bg-accent-green text-black border-accent-green shadow-glow' 
+                    : 'bg-white/5 border-white/5 text-gray-400 hover:border-white/20 hover:text-white'}
+                `}
+              >
+                {simulatedRole === role.id ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                <span className="text-[10px] font-black uppercase tracking-widest">{role.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Ghost Mode Status Banner */}
+        {isGhostMode && (
+          <motion.div 
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            className="p-4 bg-accent-green/10 border border-accent-green/30 rounded-3xl flex items-center justify-center gap-4 text-accent-green overflow-hidden"
+          >
+             <div className="w-2 h-2 bg-accent-green rounded-full animate-ping" />
+             <p className="text-xs font-mono uppercase tracking-[0.2em] font-bold">
+               MODE FANTÔME ACTIF : VOUS SIMULEZ LE RÔLE {simulatedRole?.toUpperCase()}
+             </p>
+          </motion.div>
+        )}
+
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <PremiumCard className="p-6">
+              <p className="label-caps">Total Utilisateurs</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-3xl font-black">1.4k</span>
+                <Users className="w-6 h-6 text-accent-green/50" />
+              </div>
           </PremiumCard>
-          <PremiumCard className="p-4 border-l-4 border-blue-500">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-blue-500/10 rounded-lg text-blue-500">
-                <Building className="w-5 h-5" />
+          <PremiumCard className="p-6">
+              <p className="label-caps">Établissements</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-3xl font-black">58</span>
+                <Building className="w-6 h-6 text-blue-400/50" />
               </div>
-              <div>
-                <p className="text-gray-500 text-xs">Établissements</p>
-                <p className="text-2xl font-bold">42</p>
-              </div>
-            </div>
           </PremiumCard>
-          <PremiumCard className="p-4 border-l-4 border-purple-500">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-purple-500/10 rounded-lg text-purple-500">
-                <BarChart3 className="w-5 h-5" />
+          <PremiumCard className="p-6">
+              <p className="label-caps">Volume Prescriptions</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-3xl font-black">+124%</span>
+                <BarChart3 className="w-6 h-6 text-purple-400/50" />
               </div>
-              <div>
-                <p className="text-gray-500 text-xs">Volume Flux</p>
-                <p className="text-2xl font-bold">+82%</p>
-              </div>
-            </div>
           </PremiumCard>
-          <PremiumCard className="p-4 border-l-4 border-yellow-500">
-            <div className="flex items-center gap-4">
-              <div className="p-2 bg-yellow-500/10 rounded-lg text-yellow-500">
-                <AlertTriangle className="w-5 h-5" />
+          <PremiumCard className="p-6">
+              <p className="label-caps">Uptime Réseau</p>
+              <div className="flex items-center justify-between mt-2">
+                <span className="text-3xl font-black">99.9%</span>
+                <Activity className="w-6 h-6 text-accent-green/50" />
               </div>
-              <div>
-                <p className="text-gray-500 text-xs">Alertes Système</p>
-                <p className="text-2xl font-bold">3</p>
-              </div>
-            </div>
           </PremiumCard>
         </div>
 
-        {/* Main Work Area */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Creation Form */}
-          <div className="lg:col-span-2 space-y-6">
-            <h2 className="text-2xl font-bold tracking-tight">MASTER CONTROL : CRÉATION D&apos;ACCÈS</h2>
-            <PremiumCard>
-              <form className="space-y-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                   <PremiumInput 
-                     label="Nom Complet" 
-                     placeholder="Dr. Ahmed Ben Ali" 
-                     icon={<UserPlus className="w-4 h-4" />}
-                   />
-                   <div className="space-y-2">
-                     <label className="text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500 ml-1">Rôle Système</label>
-                     <select className="w-full bg-black border-[0.5px] border-border-iron rounded-xl p-3.5 text-white focus:border-accent-green outline-none transition-all text-sm">
-                       <option>doctor</option>
-                       <option>pharmacy</option>
-                       <option>clinic</option>
-                       <option>admin</option>
-                     </select>
-                   </div>
-                   <PremiumInput 
-                     label="Email Pro" 
-                     placeholder="contact@clinique.tn" 
-                     icon={<Users className="w-4 h-4" />}
-                   />
-                   <PremiumInput 
-                     label="Établissement Rattaché" 
-                     placeholder="Clinique Ennasr" 
-                     icon={<Building className="w-4 h-4" />}
-                   />
-                </div>
-                
-                <button className="bg-accent-green text-black px-10 py-5 rounded-2xl font-bold flex items-center gap-3 shadow-glow transition-all hover:scale-[1.02] hover:shadow-glow-strong">
-                  GÉNÉRER L&apos;ACCÈS SÉCURISÉ <UserPlus className="w-5 h-5" />
-                </button>
-              </form>
-            </PremiumCard>
-          </div>
+        {/* Action Center */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
+           <Link href="/admin/access-management">
+              <PremiumCard className="p-10 group cursor-pointer hover:border-accent-green/40">
+                 <div className="flex items-center justify-between">
+                    <div className="space-y-4">
+                       <div className="p-4 bg-accent-green/20 rounded-2xl w-fit text-accent-green shadow-glow">
+                          <Users className="w-8 h-8" />
+                       </div>
+                       <h3 className="text-3xl font-black uppercase tracking-tighter">Gestion des Accès</h3>
+                       <p className="text-gray-500 text-sm max-w-xs leading-relaxed">
+                          Créez des comptes pour les cliniques, docteurs et pharmacies de votre réseau.
+                       </p>
+                    </div>
+                    <div className="p-4 bg-white/5 rounded-full group-hover:bg-accent-green group-hover:text-black transition-all">
+                       <ArrowRight className="w-6 h-6" />
+                    </div>
+                 </div>
+              </PremiumCard>
+           </Link>
 
-          {/* Activity Feed */}
-          <div className="space-y-6">
-            <h2 className="text-2xl font-bold tracking-tight">FLUX ACTIVITÉ</h2>
-            <div className="space-y-4">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <div key={i} className="bg-white/5 border border-white/5 p-4 rounded-xl flex items-start gap-4 hover:border-accent-green/20 transition-all cursor-pointer">
-                  <div className="w-2 h-2 rounded-full bg-accent-green mt-2 animate-pulse" />
-                  <div>
-                    <p className="text-sm font-bold">Nouvel établissement créé</p>
-                    <p className="text-xs text-gray-500">Pharmacie de Marsa • Il y a {i*10} mins</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
+           <div className="space-y-6">
+              <h3 className="text-xl font-bold uppercase tracking-tight flex items-center gap-3">
+                 <Activity className="w-5 h-5 text-gray-500" /> Flux d&apos;activité Réseau
+              </h3>
+              <div className="space-y-4">
+                 {[1,2,3].map(i => (
+                    <PremiumCard key={i} className="p-4 flex items-center justify-between bg-[#0A0A0B]/30">
+                       <div className="flex items-center gap-4 text-sm">
+                          <div className="w-2 h-2 bg-accent-green rounded-full shadow-glow" />
+                          <span className="text-white font-bold">Nouvelle Ordonnance Émise</span>
+                          <span className="text-gray-600 font-mono text-[10px]">Tunis-D1</span>
+                       </div>
+                       <span className="text-gray-600 text-[10px] font-mono">IL Y A {i*5}M</span>
+                    </PremiumCard>
+                 ))}
+              </div>
+           </div>
         </div>
       </div>
     </DashboardLayout>
