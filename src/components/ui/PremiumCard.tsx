@@ -11,10 +11,8 @@ interface PremiumCardProps {
 export const PremiumCard = ({ children, className = "" }: PremiumCardProps) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const [isHovered, setIsHovered] = useState(false);
 
-  // Smooth springs for the spotlight movement
-  const springConfig = { damping: 25, stiffness: 200 };
+  const springConfig = { damping: 30, stiffness: 150 };
   const smoothX = useSpring(mouseX, springConfig);
   const smoothY = useSpring(mouseY, springConfig);
 
@@ -27,39 +25,42 @@ export const PremiumCard = ({ children, className = "" }: PremiumCardProps) => {
   return (
     <motion.div
       onMouseMove={handleMouseMove}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      whileHover={{ scale: 1.01 }}
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      whileHover={{ y: -5 }}
       className={`
         relative overflow-hidden group
-        bg-[#0A0A0B] border border-white/[0.08] rounded-[2rem]
-        backdrop-blur-xl shadow-2xl
-        transition-all duration-500 ease-out
+        bg-[#0A0A0B]/60 border border-white/5 rounded-[2.5rem]
+        backdrop-blur-3xl shadow-[0_30px_60px_-15px_rgba(0,0,0,0.5)]
+        transition-all duration-700
         ${className}
       `}
     >
       {/* Liquid Spotlight Gradient */}
       <motion.div
-        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-1000"
         style={{
           background: useMotionTemplate`
             radial-gradient(
-              450px circle at ${smoothX}px ${smoothY}px,
-              rgba(0, 255, 136, 0.08),
-              transparent 80%
+              600px circle at ${smoothX}px ${smoothY}px,
+              rgba(0, 255, 136, 0.05),
+              transparent 70%
             )
           `,
         }}
       />
 
-      {/* Edge Highlight Glow */}
+      {/* Internal Glass Shine */}
+      <div className="absolute top-0 left-0 w-full h-1/2 bg-gradient-to-b from-white/[0.03] to-transparent pointer-events-none" />
+
+      {/* Edge Glow Overlay */}
       <motion.div
         className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700"
         style={{
           background: useMotionTemplate`
             radial-gradient(
-              150px circle at ${smoothX}px ${smoothY}px,
-              rgba(0, 255, 136, 0.2),
+              200px circle at ${smoothX}px ${smoothY}px,
+              rgba(0, 255, 136, 0.15),
               transparent 80%
             )
           `,

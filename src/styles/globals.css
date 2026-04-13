@@ -2,75 +2,71 @@
 
 @theme {
   --font-inter: "Inter", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
   --color-accent-green: #00FF88;
   --color-dark-bg: #000000;
-  --color-card-bg: #0A0A0B;
-  --color-card-border: rgba(255, 255, 255, 0.08);
+  --color-card-bg: rgba(10, 10, 11, 0.7);
 }
 
 :root {
-  --accent-neon: #00FF88;
-  --accent-glow: rgba(0, 255, 136, 0.15);
-  --glass-bg: rgba(10, 10, 11, 0.85);
-  --glass-border: rgba(255, 255, 255, 0.05);
+  --neon-emerald: #00FF88;
+  --neon-glow: rgba(0, 255, 136, 0.1);
+  --glass-border: rgba(255, 255, 255, 0.08);
 }
 
 @layer base {
   body {
     @apply bg-black text-white selection:bg-accent-green/30;
-    font-family: var(--font-inter);
+    font-family: var(--font-outfit);
     background: #000000;
-    overflow-x: hidden;
   }
 
-  /* Tech Typography */
-  h1, h2, h3, h4, .tech-heading {
-    @apply tracking-tighter uppercase italic;
-    letter-spacing: -0.02em;
+  /* Custom Scrollbar Premium */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { 
+    background: rgba(255, 255, 255, 0.05); 
+    border-radius: 10px; 
   }
-
-  .label-caps {
-    @apply text-[10px] font-mono uppercase tracking-[0.2em] text-gray-500;
-  }
+  ::-webkit-scrollbar-thumb:hover { background: var(--neon-emerald); }
 }
 
 @layer components {
-  /* Spotlight Effect Foundation */
-  .spotlight-card {
-    @apply relative bg-card-bg border border-card-border rounded-3xl overflow-hidden transition-all duration-300;
-    backdrop-filter: blur(15px);
+  /* Bento Grid Card Base */
+  .bento-card {
+    @apply relative bg-[#0A0A0B]/80 border border-white/10 rounded-[2.5rem] overflow-hidden backdrop-blur-2xl transition-all duration-500;
   }
 
-  .neon-glow-btn {
-    @apply bg-accent-green text-black font-black uppercase tracking-tighter px-6 py-4 rounded-2xl 
-           transition-all duration-300 transform hover:-translate-y-1 hover:shadow-[0_0_30px_rgba(0,255,136,0.4)];
+  /* Animated Border Effect */
+  .border-glow {
+    @apply relative before:absolute before:inset-0 before:p-[1px] before:bg-gradient-to-br before:from-white/10 before:via-white/5 before:to-white/10 before:rounded-[2.5rem] before:-z-10;
   }
 
-  .glass-input {
-    @apply bg-white/[0.03] border border-white/10 rounded-2xl py-4 px-4 text-white 
-           focus:outline-none focus:border-accent-green/40 transition-all duration-300;
+  /* Neon Utility */
+  .text-neon {
+    @apply text-accent-green drop-shadow-[0_0_10px_rgba(0,255,136,0.5)];
   }
 }
 
-/* Animations */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 0.5; filter: blur(10px); }
-  50% { opacity: 0.8; filter: blur(15px); }
-}
-
-.animate-glow {
-  animation: pulse-glow 4s ease-in-out infinite;
-}
-
-/* Separation Gradients */
-.separator-fade {
-  height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-}
-
-/* Mesh Background Layer */
-.bg-mesh {
+/* Luxury Mesh Background */
+.atmosphere-mesh {
   background: 
-    radial-gradient(at 0% 0%, rgba(0, 255, 136, 0.05) 0px, transparent 50%),
-    radial-gradient(at 100% 100%, rgba(0, 255, 136, 0.03) 0px, transparent 50%);
+    radial-gradient(circle at 20% 20%, rgba(0, 255, 136, 0.05) 0%, transparent 40%),
+    radial-gradient(circle at 80% 80%, rgba(0, 255, 136, 0.03) 0%, transparent 40%),
+    radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.02) 0%, transparent 60%);
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+}
+
+/* Glass Surface Shine */
+.glass-shine {
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.03) 0%, transparent 70%);
+  pointer-events: none;
 }
