@@ -22,9 +22,9 @@ export const prescriptionService = {
    * Create a new prescription
    */
   createPrescription: async (prescription: Partial<Prescription>) => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from("prescriptions")
-      .insert(prescription)
+      .insert(prescription as any) as any)
       .select()
       .single();
 
@@ -36,11 +36,11 @@ export const prescriptionService = {
    * Get prescriptions for a specific doctor
    */
   getDoctorPrescriptions: async (doctorId: string) => {
-    const { data, error } = await supabase
+    const { data, error } = await (supabase
       .from("prescriptions")
       .select("*")
       .eq("doctor_id", doctorId)
-      .order("created_at", { ascending: false });
+      .order("created_at", { ascending: false }) as any);
 
     if (error) throw error;
     return data;

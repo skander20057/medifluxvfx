@@ -18,7 +18,7 @@ export const adminAuthService = {
     role: 'doctor' | 'pharmacy' | 'clinic';
   }) => {
     // 1. Create the user in Auth
-    const { data: authUser, error: authError } = await supabaseAdmin.auth.admin.createUser({
+    const { data: authUser, error: authError } = await (supabaseAdmin.auth.admin.createUser({
       email: data.email,
       password: data.password,
       email_confirm: true,
@@ -26,7 +26,7 @@ export const adminAuthService = {
         full_name: data.full_name,
         role: data.role
       }
-    });
+    }) as any);
 
     if (authError) throw authError;
 
