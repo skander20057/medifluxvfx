@@ -1,29 +1,58 @@
 "use client";
 
 import React from "react";
+import { motion } from "framer-motion";
+import Image from "next/image";
 
 export const LoadingScreen = () => {
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center bg-bg-main">
-      <div className="relative flex flex-col items-center gap-6">
-        {/* Pulsing Logo Animation */}
-        <div className="relative">
-          <div className="w-16 h-16 bg-accent-green rounded-full animate-ping opacity-20 absolute inset-0" />
-          <div className="w-16 h-16 bg-accent-green rounded-full blur-xl opacity-40 absolute inset-0" />
-          <div className="w-16 h-16 bg-bg-surface border-2 border-accent-green/50 rounded-full flex items-center justify-center relative z-10 shadow-glow">
-            <div className="w-8 h-8 bg-accent-green rounded-sm rotate-45 animate-pulse" />
-          </div>
-        </div>
-        
-        <div className="flex flex-col items-center">
-          <h2 className="text-white font-bold tracking-widest text-xl mb-1">MEDIFLUX</h2>
-          <div className="flex items-center gap-1">
-            <span className="w-1 h-1 bg-accent-green rounded-full animate-bounce [animation-delay:-0.3s]" />
-            <span className="w-1 h-1 bg-accent-green rounded-full animate-bounce [animation-delay:-0.15s]" />
-            <span className="w-1 h-1 bg-accent-green rounded-full animate-bounce" />
-          </div>
-        </div>
+    <div className="fixed inset-0 z-[100] bg-black flex flex-col items-center justify-center">
+      <div className="relative">
+        {/* Deep Gaussian Glow Background */}
+        <motion.div
+          animate={{
+            scale: [1, 1.2, 1],
+            opacity: [0.3, 0.6, 0.3],
+          }}
+          transition={{
+            duration: 3,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="absolute inset-0 bg-accent-green blur-[60px] rounded-full opacity-30"
+        />
+
+        {/* Pulsating Icon */}
+        <motion.div
+          animate={{
+            opacity: [0.4, 1, 0.4],
+            scale: [0.95, 1, 0.95],
+          }}
+          transition={{
+            duration: 2,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+          className="relative z-10"
+        >
+          <Image
+            src="/icon.png"
+            alt="MediFlux OS"
+            width={120}
+            height={120}
+            className="filter drop-shadow-[0_0_20px_rgba(0,255,136,0.3)]"
+          />
+        </motion.div>
       </div>
+
+      <motion.p
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="mt-8 text-[10px] font-mono uppercase tracking-[0.5em] text-gray-600 animate-pulse"
+      >
+        Initialisation du système...
+      </motion.p>
     </div>
   );
 };

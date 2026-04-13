@@ -13,23 +13,25 @@ import {
   Menu, 
   X,
   ShieldCheck,
-  Bell
+  Bell,
+  Search
 } from "lucide-react";
 import { createClient } from "@/lib/supabaseClient";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarItem {
   title: string;
-  icon: React.ReactNode;
+  icon: React.ElementType;
   href: string;
   role: string[];
 }
 
 const sidebarItems: SidebarItem[] = [
-  { title: "Statistiques", icon: <LayoutDashboard className="w-5 h-5" />, href: "/admin", role: ["admin"] },
-  { title: "Utilisateurs", icon: <Users className="w-5 h-5" />, href: "/admin/users", role: ["admin"] },
-  { title: "Établissements", icon: <Building2 className="w-5 h-5" />, href: "/admin/clinics", role: ["admin"] },
-  { title: "Consultations", icon: <Stethoscope className="w-5 h-5" />, href: "/doctor", role: ["doctor"] },
-  { title: "Ordonnances", icon: <Pill className="w-5 h-5" />, href: "/pharmacy", role: ["pharmacy"] },
+  { title: "Statistiques", icon: LayoutDashboard, href: "/admin", role: ["admin"] },
+  { title: "Utilisateurs", icon: Users, href: "/admin/users", role: ["admin"] },
+  { title: "Établissements", icon: Building2, href: "/admin/clinics", role: ["admin"] },
+  { title: "Consultations", icon: Stethoscope, href: "/doctor", role: ["doctor"] },
+  { title: "Flux Ordonnances", icon: Pill, href: "/pharmacy", role: ["pharmacy"] },
 ];
 
 export const DashboardLayout = ({ 
@@ -53,93 +55,133 @@ export const DashboardLayout = ({
   const currentRoleItems = sidebarItems.filter(item => item.role.includes(role));
 
   return (
-    <div className="flex min-h-screen bg-bg-main text-white font-sans overflow-hidden">
+    <div className="flex min-h-screen bg-black text-white font-inter selection:bg-accent-green/20">
       {/* Sidebar */}
       <aside 
         className={`
-          ${isOpen ? "w-64" : "w-20"} 
-          bg-bg-surface border-r border-white/5 
-          transition-all duration-300 ease-in-out
-          flex flex-col z-50
+          ${isOpen ? "w-72" : "w-24"} 
+          bg-[#0A0A0B] border-r border-white/5 
+          transition-all duration-500 cubic-bezier(0.4, 0, 0.2, 1)
+          flex flex-col z-50 relative
         `}
       >
-        <div className="p-6 flex items-center justify-between">
-          {isOpen ? (
-            <h2 className="text-xl font-bold tracking-tighter text-accent-green">MEDIFLUX</h2>
-          ) : (
-            <div className="w-8 h-8 bg-accent-green rounded-lg flex items-center justify-center">
-              <span className="text-black font-bold">M</span>
-            </div>
+        <div className="p-8 flex items-center gap-4">
+          <div className="w-10 h-10 bg-accent-green rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(0,255,136,0.3)]">
+            <span className="text-black font-black text-xl">M</span>
+          </div>
+          {isOpen && (
+            <motion.h2 
+              initial={{ opacity: 0, x: -10 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="text-xl font-bold tracking-tighter"
+            >
+              MEDIFLUX <span className="text-[10px] font-mono text-accent-green block leading-none tracking-widest">v4.0 OS</span>
+            </motion.h2>
           )}
         </div>
 
-        <nav className="flex-1 px-4 space-y-2 mt-4">
-          {currentRoleItems.map((item) => (
-            <Link 
-              key={item.href} 
-              href={item.href}
-              className={`
-                flex items-center gap-4 p-3 rounded-xl transition-all group
-                ${pathname === item.href ? "bg-accent-green/10 text-accent-green border border-accent-green/20" : "hover:bg-white/5 text-gray-400"}
-              `}
-            >
-              <div className={pathname === item.href ? "text-accent-green shadow-glow" : "group-hover:text-white"}>
-                {item.icon}
-              </div>
-              {isOpen && <span className="font-medium">{item.title}</span>}
-            </Link>
-          ))}
+        {/* Separator Fade */}
+        <div className="mx-8 h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
+
+        <nav className="flex-1 px-4 space-y-2 mt-8">
+          {currentRoleItems.map((item) => {
+            const Icon = item.icon;
+            const isActive = pathname === item.href;
+            return (
+              <Link 
+                key={item.href} 
+                href={item.href}
+                className={`
+                  flex items-center gap-4 p-4 rounded-2xl transition-all duration-300 group relative
+                  ${isActive ? "bg-white/5 text-white" : "text-gray-500 hover:text-white hover:bg-white/[0.02]"}
+                `}
+              >
+                {isActive && (
+                  <motion.div 
+                    layoutId="active-pill"
+                    className="absolute inset-0 bg-white/5 rounded-2xl border border-white/10"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                  />
+                )}
+                <Icon 
+                  strokeWidth={isActive ? 2 : 1.5} 
+                  className={`w-5 h-5 relative z-10 ${isActive ? "text-accent-green drop-shadow-[0_0_8px_rgba(0,255,136,0.5)]" : "group-hover:text-white"}`} 
+                />
+                {isOpen && <span className="font-semibold text-sm relative z-10 tracking-tight">{item.title}</span>}
+              </Link>
+            );
+          })}
         </nav>
 
-        <div className="p-4 border-t border-white/5 mt-auto">
+        {/* Bottom Section */}
+        <div className="p-6 mt-auto space-y-4">
+          <div className="h-px bg-gradient-to-r from-transparent via-white/5 to-transparent" />
           <button 
             onClick={handleLogout}
-            className="flex items-center gap-4 p-3 w-full rounded-xl hover:bg-red-500/10 text-gray-400 hover:text-red-500 transition-all"
+            className="flex items-center gap-4 p-4 w-full rounded-2xl text-gray-500 hover:text-red-500 hover:bg-red-500/5 transition-all duration-300 group"
           >
-            <LogOut className="w-5 h-5" />
-            {isOpen && <span className="font-medium">Déconnexion</span>}
+            <LogOut strokeWidth={1.5} className="w-5 h-5 group-hover:drop-shadow-[0_0_8px_rgba(239,68,68,0.5)]" />
+            {isOpen && <span className="font-semibold text-sm">Déconnexion</span>}
           </button>
         </div>
       </aside>
 
-      {/* Main Content */}
+      {/* Main Content Area */}
       <main className="flex-1 flex flex-col min-w-0 bg-[#000000] relative">
         {/* Header */}
-        <header className="h-20 border-b border-white/5 flex items-center justify-between px-8 bg-bg-main/50 backdrop-blur-md sticky top-0 z-40">
-          <div className="flex items-center gap-4">
-            <button onClick={() => setIsOpen(!isOpen)} className="p-2 hover:bg-white/5 rounded-lg">
-              {isOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+        <header className="h-24 border-b border-white/5 flex items-center justify-between px-10 bg-black/50 backdrop-blur-xl sticky top-0 z-40">
+          <div className="flex items-center gap-6">
+            <button 
+              onClick={() => setIsOpen(!isOpen)} 
+              className="p-3 bg-white/5 border border-white/5 hover:border-white/20 rounded-xl transition-all"
+            >
+              {isOpen ? <X strokeWidth={1.5} className="w-5 h-5" /> : <Menu strokeWidth={1.5} className="w-5 h-5" />}
             </button>
-            <div className="h-4 w-px bg-white/10 mx-2" />
-            <h1 className="text-sm font-mono text-gray-500 uppercase tracking-widest">
-              Dashboard / <span className="text-white">{role}</span>
-            </h1>
+            
+            <div className="relative hidden md:block w-80">
+               <Search strokeWidth={1.5} className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-500" />
+               <input 
+                 className="w-full bg-white/[0.03] border border-white/10 rounded-2xl py-3 pl-12 pr-4 text-xs font-mono focus:outline-none focus:border-accent-green/30"
+                 placeholder="COMMAND PALETTE..." 
+               />
+            </div>
           </div>
 
           <div className="flex items-center gap-6">
-            <button className="relative p-2 hover:bg-white/5 rounded-lg text-gray-400 hover:text-white transition-colors">
-              <Bell className="w-5 h-5" />
-              <span className="absolute top-2 right-2 w-2 h-2 bg-accent-green rounded-full shadow-glow" />
+            <button className="relative p-3 bg-white/5 border border-white/5 rounded-xl text-gray-400 hover:text-white transition-all group">
+              <Bell strokeWidth={1.5} className="w-5 h-5" />
+              <span className="absolute top-3 right-3 w-2 h-2 bg-accent-green rounded-full shadow-[0_0_10px_rgba(0,255,136,1)] animate-pulse" />
             </button>
-            <div className="flex items-center gap-3 bg-white/5 p-1.5 pr-4 rounded-full border border-white/10">
-              <div className="w-8 h-8 rounded-full bg-accent-green/20 flex items-center justify-center border border-accent-green/30">
-                <ShieldCheck className="w-4 h-4 text-accent-green" />
+            
+            <div className="flex items-center gap-4 pl-4 border-l border-white/10">
+              <div className="text-right hidden sm:block">
+                <p className="text-sm font-bold tracking-tight">{userName || "Dr. Skander"}</p>
+                <p className="text-[10px] text-accent-green font-mono uppercase tracking-widest leading-none mt-1">Status: Authentifié</p>
               </div>
-              <div className="text-sm">
-                <p className="font-bold leading-none">{userName || "Utilisateur"}</p>
-                <p className="text-[10px] text-gray-500 uppercase tracking-wider">{role}</p>
+              <div className="w-12 h-12 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center relative group">
+                <ShieldCheck strokeWidth={1.5} className="w-6 h-6 text-accent-green group-hover:scale-110 transition-transform" />
               </div>
             </div>
           </div>
         </header>
 
-        {/* Content Area */}
-        <div className="flex-1 overflow-y-auto p-8 relative">
-           {/* Background Mesh for Atmosphere */}
-           <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-accent-green/5 blur-[120px] rounded-full pointer-events-none" />
+        {/* Dynamic Content */}
+        <div className="flex-1 overflow-y-auto p-10 relative custom-scrollbar">
+           {/* Atmosphere Layer */}
+           <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-accent-green/5 blur-[150px] rounded-full pointer-events-none opacity-50" />
            
            <div className="relative z-10 w-full max-w-7xl mx-auto">
-            {children}
+             <AnimatePresence mode="wait">
+              <motion.div
+                key={pathname}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+              >
+                {children}
+              </motion.div>
+             </AnimatePresence>
            </div>
         </div>
       </main>

@@ -1,25 +1,22 @@
 "use client";
 
 import React, { useRef, useState } from "react";
-import { motion, useMotionValue, useSpring } from "framer-motion";
+import { motion, useMotionValue, useSpring, useMotionTemplate } from "framer-motion";
 
 interface PremiumCardProps {
   children: React.ReactNode;
   className?: string;
-  onClick?: () => void;
 }
 
-export const PremiumCard = ({ children, className = "", onClick }: PremiumCardProps) => {
-  const cardRef = useRef<HTMLDivElement>(null);
-  const [isHovered, setIsHovered] = useState(false);
-
+export const PremiumCard = ({ children, className = "" }: PremiumCardProps) => {
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   // Smooth springs for the spotlight movement
-  const springConfig = { damping: 20, stiffness: 300 };
-  const spotX = useSpring(mouseX, springConfig);
-  const spotY = useSpring(mouseY, springConfig);
+  const springConfig = { damping: 25, stiffness: 200 };
+  const smoothX = useSpring(mouseX, springConfig);
+  const smoothY = useSpring(mouseY, springConfig);
 
   function handleMouseMove({ currentTarget, clientX, clientY }: React.MouseEvent) {
     const { left, top } = currentTarget.getBoundingClientRect();
@@ -28,37 +25,50 @@ export const PremiumCard = ({ children, className = "", onClick }: PremiumCardPr
   }
 
   return (
-    <div
-      ref={cardRef}
-      onClick={onClick}
+    <motion.div
       onMouseMove={handleMouseMove}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
+      whileHover={{ scale: 1.01 }}
       className={`
-        relative overflow-hidden
-        bg-[#0A0A0B]/60 backdrop-blur-[20px]
-        border-[1px] border-white/[0.03] rounded-2xl
-        transition-all duration-500
-        hover:border-accent-green/20
+        relative overflow-hidden group
+        bg-[#0A0A0B] border border-white/[0.08] rounded-[2rem]
+        backdrop-blur-xl shadow-2xl
+        transition-all duration-500 ease-out
         ${className}
       `}
     >
-      {/* Dynamic Spotlight Effect */}
+      {/* Liquid Spotlight Gradient */}
       <motion.div
-        className="pointer-events-none absolute -inset-px opacity-0 transition-opacity duration-300 z-0"
+        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700"
         style={{
-          background: `radial-gradient(400px circle at ${spotX}px ${spotY}px, rgba(0, 255, 136, 0.08), transparent 70%)`,
-          opacity: isHovered ? 1 : 0,
+          background: useMotionTemplate`
+            radial-gradient(
+              450px circle at ${smoothX}px ${smoothY}px,
+              rgba(0, 255, 136, 0.08),
+              transparent 80%
+            )
+          `,
         }}
       />
 
-      {/* Internal Content */}
-      <div className="relative z-10 p-6 h-full">
-        {children}
-      </div>
+      {/* Edge Highlight Glow */}
+      <motion.div
+        className="pointer-events-none absolute -inset-px opacity-0 group-hover:opacity-100 transition-opacity duration-700"
+        style={{
+          background: useMotionTemplate`
+            radial-gradient(
+              150px circle at ${smoothX}px ${smoothY}px,
+              rgba(0, 255, 136, 0.2),
+              transparent 80%
+            )
+          `,
+          maskImage: "linear-gradient(white, white), linear-gradient(white, white)",
+          maskComposite: "exclude",
+        }}
+      />
 
-      {/* Subtle Bottom Glow Line */}
-      <div className="absolute bottom-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-accent-green/10 to-transparent" />
-    </div>
+      <div className="relative z-10">{children}</div>
+    </motion.div>
   );
 };
