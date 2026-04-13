@@ -49,9 +49,9 @@ export const LoadingScreen = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.5 }}
-        className="mt-8 text-[10px] font-mono uppercase tracking-[0.5em] text-gray-600 animate-pulse"
+        className="mt-8 text-[10px] font-mono uppercase tracking-[0.5em] text-accent-green animate-pulse"
       >
-        Initialisation du système...
+        Initialisation V5 MASTER ACTIVE...
       </motion.p>
     </div>
   );
